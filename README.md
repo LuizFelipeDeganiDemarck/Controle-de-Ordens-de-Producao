@@ -216,7 +216,9 @@ http://localhost:5173
 
 # 📷 Demonstração
 
-(Opcional: adicionar prints da aplicação)
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/f1c4c79c-f55d-4f0c-9d61-7a23d717a035" />
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/3b4aee46-1948-4521-a313-fbfde8d9040b" />
+
 
 ---
 
