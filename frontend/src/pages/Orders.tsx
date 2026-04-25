@@ -27,7 +27,10 @@ export default function Orders() {
                         <th>Número</th>
                         <th>Status</th>
                         <th>Produto</th>
-                        <th>Ações</th>
+                        <th>Quantidade Aceitas</th>
+                        <th>Quantidade Refugada</th>
+                        <th>Total Pedido</th>
+                        <th>Apontamentos</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,10 +41,15 @@ export default function Orders() {
                                 <StatusBadge status={o.status} />
                             </td>
                             <td>{o.product?.name}</td>
+                            <td>{o.totalGood}</td>
+                            <td>{o.totalScrap}</td>
+                            <td>{o.targetQuantity}</td>
                             <td>
-                                <Link to={`/orders/${o.id}`} className="text-blue-500">
-                                    Ver
-                                </Link>
+                                {o.status !== 'FINISHED' &&
+                                    <Link to={`/orders/${o.id}`} className="text-blue-500">
+                                        Editar
+                                    </Link>
+                                }
                             </td>
                         </tr>
                     ))}

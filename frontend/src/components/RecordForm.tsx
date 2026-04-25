@@ -24,6 +24,7 @@ export default function RecordForm({ orderId, onSuccess }: any) {
             </select>
 
             <input
+                placeholder="Quantidade"
                 type="number"
                 onChange={(e) => setQuantity(Number(e.target.value))}
                 className="border p-2"

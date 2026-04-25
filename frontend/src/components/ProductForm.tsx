@@ -29,7 +29,7 @@ export default function ProductForm({ onSuccess }: any) {
                 onChange={(e) => setSku(e.target.value)}
                 className="border p-2"
             />
-            <button className="bg-blue-500 text-white px-4">Salvar</button>
+            <button className="bg-blue-500 text-white px-4">Adicionar</button>
         </form>
     );
 }

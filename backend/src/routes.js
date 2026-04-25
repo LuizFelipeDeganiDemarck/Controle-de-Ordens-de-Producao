@@ -234,6 +234,10 @@ router.get('/dashboard/production', async (req, res) => {
         where: { status: 'OPEN' },
     });
 
+    const inProgressOrders = await prisma.productionOrder.count({
+        where: { status: 'IN_PROGRESS' },
+    });
+
     const finishedOrders = await prisma.productionOrder.count({
         where: { status: 'FINISHED' },
     });
@@ -251,6 +255,7 @@ router.get('/dashboard/production', async (req, res) => {
     res.json({
         totalOrders,
         openOrders,
+        inProgressOrders,
         finishedOrders,
         totalGood,
         totalScrap,

@@ -15,12 +15,14 @@ export default function OrderForm({ onSuccess }: any) {
         e.preventDefault();
 
         await api.post("/orders", {
-            productId: Number(productId),
-            orderNumber,
-            targetQuantity,
+            product_id: Number(productId),
+            order_number: orderNumber,
+            target_quantity: targetQuantity,
+        }).then(() => {
+            onSuccess();
+        }).catch((err) => {
+            console.log(err);
         });
-
-        onSuccess();
     }
 
     return (
@@ -47,7 +49,7 @@ export default function OrderForm({ onSuccess }: any) {
                 ))}
             </select>
 
-            <button className="bg-green-500 text-white px-4">Criar</button>
+            <button className="bg-green-500 text-white px-4" type="submit"> Criar</button>
         </form>
     );
 }

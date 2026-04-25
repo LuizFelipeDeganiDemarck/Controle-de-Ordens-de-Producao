@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useParams } from "react-router-dom";
 import RecordForm from "../components/RecordForm";
+import StatusBadge from "../components/StatusBadge";
 
 export default function OrderDetail() {
     const { id } = useParams();
@@ -23,7 +24,7 @@ export default function OrderDetail() {
                 Ordem {order.orderNumber}
             </h1>
 
-            <p>Status: {order.status}</p>
+            <p>Status: <StatusBadge status={order.status} /></p>
 
             <RecordForm orderId={id} onSuccess={load} />
 

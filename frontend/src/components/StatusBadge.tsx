@@ -5,9 +5,15 @@ export default function StatusBadge({ status }: { status: string }) {
         FINISHED: "bg-green-500",
     };
 
+    const labels: any = {
+        OPEN: "Aberta",
+        IN_PROGRESS: "Em Andamento",
+        FINISHED: "Finalizada",
+    };
+
     return (
         <span className={`px-2 py-1 text-white rounded ${colors[status]}`}>
-            {status}
+            {labels[status]}
         </span>
     );
 }
