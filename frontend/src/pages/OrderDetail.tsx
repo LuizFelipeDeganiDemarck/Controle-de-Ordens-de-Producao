@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import RecordForm from "../components/RecordForm";
 import StatusBadge from "../components/StatusBadge";
 
@@ -16,27 +16,74 @@ export default function OrderDetail() {
         load();
     }, []);
 
-    if (!order) return <p>Carregando...</p>;
+    if (!order) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-4">
-            <h1 className="text-xl font-bold">
-                Ordem {order.orderNumber}
-            </h1>
+        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in p-4 lg:p-0">
+            <div className="flex items-center gap-5 border-b border-slate-200 pb-4">
+                <h1 className="text-2xl font-extrabold text-slate-900">
+                    Detalhes da Ordem <span className="text-blue-600 font-mono">#{order.orderNumber}</span>
+                </h1>
+            </div>
 
-            <p>Status: <StatusBadge status={order.status} /></p>
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold mb-1">Produto Associado</p>
+                    <p className="text-lg font-bold text-slate-800">{order.product?.name}</p>
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold mb-1">Status Atual</p>
+                    <StatusBadge status={order.status} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold mb-1">Meta de Produção</p>
+                    <p className="text-lg font-black text-slate-700">{order.targetQuantity} unid.</p>
+                </div>
+            </div>
 
-            <RecordForm orderId={id} onSuccess={load} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
+                    <h2 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Registrar Apontamento</h2>
+                    <RecordForm orderId={id} onSuccess={load} />
+                </div>
 
-            <h2 className="mt-4 font-bold">Apontamentos</h2>
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
+                    <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
+                        <h2 className="text-lg font-bold text-slate-800">Histórico</h2>
+                        <span className="text-sm font-bold text-slate-500">{order.records?.length || 0} registros</span>
+                    </div>
 
-            <ul>
-                {order.records?.map((r: any) => (
-                    <li key={r.id}>
-                        {r.type} - {r.quantity}
-                    </li>
-                ))}
-            </ul>
+                    {order.records?.length > 0 ? (
+                        <ul className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                            {order.records.map((r: any) => (
+                                <li key={r.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div className="flex items-center gap-3">
+                                        {r.type === 'GOOD' ? (
+                                            <span className="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-bold tracking-wider">GOOD</span>
+                                        ) : (
+                                            <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-xs font-bold tracking-wider">SCRAP</span>
+                                        )}
+                                        <span className="text-sm text-slate-500">
+                                            {new Date(r.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <span className="font-bold text-slate-700">+{r.quantity}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="text-center p-6 text-slate-400">
+                            Nenhum apontamento registrado ainda.
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

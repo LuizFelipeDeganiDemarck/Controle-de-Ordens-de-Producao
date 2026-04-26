@@ -4,16 +4,26 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const router = express.Router();
 
-//
-// 🔹 TESTE
-//
+const calculateOrderProgress = (order) => {
+    const totalGood = order.records
+        .filter(r => r.type === 'GOOD')
+        .reduce((sum, r) => sum + r.quantity, 0);
+
+    const totalScrap = order.records
+        .filter(r => r.type === 'SCRAP')
+        .reduce((sum, r) => sum + r.quantity, 0);
+
+    const progress = order.targetQuantity > 0 
+        ? ((totalGood / order.targetQuantity) * 100).toFixed(2) 
+        : "0.00";
+
+    return { totalGood, totalScrap, progress };
+};
+
 router.get('/test', (req, res) => {
     res.json({ ok: true });
 });
 
-//
-// 🔹 PRODUTOS
-//
 router.post('/api/products', async (req, res) => {
     try {
         const { name, sku } = req.body;
@@ -42,9 +52,6 @@ router.get('/api/products', async (req, res) => {
     res.json(result);
 });
 
-//
-// 🔹 ORDENS
-//
 router.post('/api/orders', async (req, res) => {
     try {
         const { order_number, product_id, target_quantity } = req.body;
@@ -70,9 +77,6 @@ router.post('/api/orders', async (req, res) => {
     }
 });
 
-//
-// 🔹 LISTAR ORDENS (com progresso)
-//
 router.get('/api/orders', async (req, res) => {
     const orders = await prisma.productionOrder.findMany({
         include: {
@@ -83,30 +87,18 @@ router.get('/api/orders', async (req, res) => {
     });
 
     const data = orders.map((order) => {
-        const totalGood = order.records
-            .filter(r => r.type === 'GOOD')
-            .reduce((sum, r) => sum + r.quantity, 0);
-
-        const totalScrap = order.records
-            .filter(r => r.type === 'SCRAP')
-            .reduce((sum, r) => sum + r.quantity, 0);
-
-        const progress = (totalGood / order.targetQuantity) * 100;
-
+        const { totalGood, totalScrap, progress } = calculateOrderProgress(order);
         return {
             ...order,
             totalGood,
             totalScrap,
-            progress: progress.toFixed(2),
+            progress,
         };
     });
 
     res.json(data);
 });
 
-//
-// 🔹 DETALHE DA ORDEM
-//
 router.get('/api/orders/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -122,27 +114,16 @@ router.get('/api/orders/:id', async (req, res) => {
         return res.status(404).json({ error: 'Ordem não encontrada' });
     }
 
-    const totalGood = order.records
-        .filter(r => r.type === 'GOOD')
-        .reduce((sum, r) => sum + r.quantity, 0);
-
-    const totalScrap = order.records
-        .filter(r => r.type === 'SCRAP')
-        .reduce((sum, r) => sum + r.quantity, 0);
-
-    const progress = (totalGood / order.targetQuantity) * 100;
+    const { totalGood, totalScrap, progress } = calculateOrderProgress(order);
 
     res.json({
         ...order,
         totalGood,
         totalScrap,
-        progress: progress.toFixed(2),
+        progress,
     });
 });
 
-//
-// 🔹 ATUALIZAR STATUS
-//
 router.patch('/api/orders/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -162,9 +143,6 @@ router.patch('/api/orders/:id/status', async (req, res) => {
     res.json(updated);
 });
 
-//
-// 🔹 APONTAMENTOS
-//
 router.post('/api/orders/:id/records', async (req, res) => {
     const { id } = req.params;
     const { type, quantity, note } = req.body;
@@ -186,9 +164,7 @@ router.post('/api/orders/:id/records', async (req, res) => {
         return res.status(400).json({ error: 'Ordem finalizada' });
     }
 
-    const totalGood = order.records
-        .filter(r => r.type === 'GOOD')
-        .reduce((sum, r) => sum + r.quantity, 0);
+    const { totalGood } = calculateOrderProgress(order);
 
     if (type === 'GOOD' && totalGood + quantity > order.targetQuantity) {
         return res.status(400).json({ error: 'Ultrapassa quantidade da ordem' });
@@ -224,9 +200,6 @@ router.post('/api/orders/:id/records', async (req, res) => {
     res.json({ ok: true });
 });
 
-//
-// 🔹 DASHBOARD
-//
 router.get('/api/dashboard/production', async (req, res) => {
     const totalOrders = await prisma.productionOrder.count();
 
@@ -236,6 +209,10 @@ router.get('/api/dashboard/production', async (req, res) => {
 
     const finishedOrders = await prisma.productionOrder.count({
         where: { status: 'FINISHED' },
+    });
+
+    const inProgressOrders = await prisma.productionOrder.count({
+        where: { status: 'IN_PROGRESS' },
     });
 
     const records = await prisma.productionRecord.findMany();
@@ -252,6 +229,7 @@ router.get('/api/dashboard/production', async (req, res) => {
         totalOrders,
         openOrders,
         finishedOrders,
+        inProgressOrders,
         totalGood,
         totalScrap,
     });

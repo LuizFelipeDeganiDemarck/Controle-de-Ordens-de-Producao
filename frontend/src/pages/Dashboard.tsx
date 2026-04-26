@@ -24,11 +24,8 @@ export default function Dashboard() {
 
     useEffect(() => {
         api
-            // ROTA CORRETA
             .get("/dashboard/production")
             .then((res) => {
-                console.log("DADOS:", res.data); // debug
-
                 const d = res.data;
 
                 setData({
