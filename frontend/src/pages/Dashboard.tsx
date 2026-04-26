@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 
-type DashboardData = {
+interface DashboardData {
     totalOrders: number;
     openOrders: number;
     finishedOrders: number;
     inProgressOrders: number;
     totalGood: number;
     totalScrap: number;
-};
+}
 
 export default function Dashboard() {
     const [data, setData] = useState<DashboardData>({
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         api
-            // 🔥 ROTA CORRETA
+            // ROTA CORRETA
             .get("/dashboard/production")
             .then((res) => {
                 console.log("DADOS:", res.data); // debug

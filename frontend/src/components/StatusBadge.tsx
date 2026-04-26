@@ -1,11 +1,18 @@
+interface StatusBadge {
+    OPEN: string;
+    IN_PROGRESS: string;
+    FINISHED: string;
+}
+
 export default function StatusBadge({ status }: { status: string }) {
-    const colors: any = {
+
+    const colors: StatusBadge = {
         OPEN: "bg-yellow-400",
         IN_PROGRESS: "bg-blue-400",
         FINISHED: "bg-green-500",
     };
 
-    const labels: any = {
+    const labels: StatusBadge = {
         OPEN: "Aberta",
         IN_PROGRESS: "Em Andamento",
         FINISHED: "Finalizada",

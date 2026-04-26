@@ -7,19 +7,19 @@ import { Link } from "react-router-dom";
 export default function Orders() {
     const [orders, setOrders] = useState([]);
 
-    function load() {
+    function getOrders() {
         api.get("/orders").then((res) => setOrders(res.data));
     }
 
     useEffect(() => {
-        load();
+        getOrders();
     }, []);
 
     return (
         <div className="p-4">
             <h1 className="text-xl font-bold mb-4">Ordens</h1>
 
-            <OrderForm onSuccess={load} />
+            <OrderForm onSuccess={getOrders} />
 
             <table className="w-full border">
                 <thead>
