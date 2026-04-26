@@ -14,7 +14,7 @@ O sistema permite cadastro de produtos, criação de ordens de produção, regis
 * Node.js
 * Express
 * PostgreSQL
-* SQL (queries manuais)
+* Prisma ORM
 
 ## Frontend
 
@@ -64,11 +64,14 @@ O sistema permite cadastro de produtos, criação de ordens de produção, regis
 
 ```
 backend/
+ ├── prisma/
+ │    └── schema.prisma
  ├── src/
- │    ├── routes/
- │    ├── controllers/
- │    ├── db.js
+ │    ├── prisma.js
+ │    ├── routes.js
  │    └── index.js
+ ├── .env
+ └── .env.example
 
 frontend/
  ├── src/
@@ -101,22 +104,22 @@ npm install
 
 ### Configurar banco de dados
 
-Criar banco no PostgreSQL e configurar conexão no arquivo:
+Crie um banco de dados no PostgreSQL. Em seguida, crie um arquivo `.env` na pasta `backend` com base no `.env.example`:
 
+```bash
+cp .env.example .env
 ```
-src/db.js
+
+Configure a variável `DATABASE_URL` no arquivo `.env` com as suas credenciais. Exemplo:
+
+```env
+DATABASE_URL="postgresql://postgres:senha@localhost:5432/producao?schema=public"
 ```
 
-Exemplo:
+Execute as migrations do Prisma para criar as tabelas no banco de dados:
 
-```js
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "producao",
-  password: "senha",
-  port: 5432,
-});
+```bash
+npx prisma migrate dev --name init
 ```
 
 ### Rodar backend

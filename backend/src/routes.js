@@ -14,7 +14,7 @@ router.get('/test', (req, res) => {
 //
 // 🔹 PRODUTOS
 //
-router.post('/products', async (req, res) => {
+router.post('/api/products', async (req, res) => {
     try {
         const { name, sku } = req.body;
 
@@ -35,7 +35,7 @@ router.post('/products', async (req, res) => {
     }
 });
 
-router.get('/products', async (req, res) => {
+router.get('/api/products', async (req, res) => {
     const result = await prisma.product.findMany({
         orderBy: { id: 'desc' },
     });
@@ -45,7 +45,7 @@ router.get('/products', async (req, res) => {
 //
 // 🔹 ORDENS
 //
-router.post('/orders', async (req, res) => {
+router.post('/api/orders', async (req, res) => {
     try {
         const { order_number, product_id, target_quantity } = req.body;
 
@@ -73,7 +73,7 @@ router.post('/orders', async (req, res) => {
 //
 // 🔹 LISTAR ORDENS (com progresso)
 //
-router.get('/orders', async (req, res) => {
+router.get('/api/orders', async (req, res) => {
     const orders = await prisma.productionOrder.findMany({
         include: {
             product: true,
@@ -107,7 +107,7 @@ router.get('/orders', async (req, res) => {
 //
 // 🔹 DETALHE DA ORDEM
 //
-router.get('/orders/:id', async (req, res) => {
+router.get('/api/orders/:id', async (req, res) => {
     const { id } = req.params;
 
     const order = await prisma.productionOrder.findUnique({
@@ -143,7 +143,7 @@ router.get('/orders/:id', async (req, res) => {
 //
 // 🔹 ATUALIZAR STATUS
 //
-router.patch('/orders/:id/status', async (req, res) => {
+router.patch('/api/orders/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
@@ -165,7 +165,7 @@ router.patch('/orders/:id/status', async (req, res) => {
 //
 // 🔹 APONTAMENTOS
 //
-router.post('/orders/:id/records', async (req, res) => {
+router.post('/api/orders/:id/records', async (req, res) => {
     const { id } = req.params;
     const { type, quantity, note } = req.body;
 
@@ -227,15 +227,11 @@ router.post('/orders/:id/records', async (req, res) => {
 //
 // 🔹 DASHBOARD
 //
-router.get('/dashboard/production', async (req, res) => {
+router.get('/api/dashboard/production', async (req, res) => {
     const totalOrders = await prisma.productionOrder.count();
 
     const openOrders = await prisma.productionOrder.count({
         where: { status: 'OPEN' },
-    });
-
-    const inProgressOrders = await prisma.productionOrder.count({
-        where: { status: 'IN_PROGRESS' },
     });
 
     const finishedOrders = await prisma.productionOrder.count({
@@ -255,7 +251,6 @@ router.get('/dashboard/production', async (req, res) => {
     res.json({
         totalOrders,
         openOrders,
-        inProgressOrders,
         finishedOrders,
         totalGood,
         totalScrap,
