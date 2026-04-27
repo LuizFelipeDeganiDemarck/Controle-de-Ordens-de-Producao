@@ -178,3 +178,11 @@ A aplicacao ficara disponivel em `http://localhost:5173`.
 - Testes automatizados para as regras de negocio principais.
 - Docker Compose para facilitar a execucao do ambiente.
 - Dashboard com graficos de progresso por periodo.
+
+
+
+## Fotos de Demonstração 
+
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/3ed48268-f489-487f-83d1-efd996c1c445" />
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/9c6c3972-9857-4f9a-a221-ae3788503711" />
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/eb67099c-fdee-4bcc-bc77-1f6e7ed575a8" />
