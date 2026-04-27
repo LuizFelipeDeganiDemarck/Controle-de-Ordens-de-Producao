@@ -1,142 +1,114 @@
+# Sistema de Controle de Ordens de Producao
 
-# 📦 Sistema de Controle de Ordens de Produção
+Aplicacao full stack desenvolvida como avaliacao tecnica para a vaga de Desenvolvedor Fullstack Junior.
 
-Aplicação full stack desenvolvida como avaliação técnica para vaga de Desenvolvedor Fullstack Júnior.
-
-O sistema permite cadastro de produtos, criação de ordens de produção, registro de apontamentos (GOOD e SCRAP) e visualização de indicadores de produção.
-
----
-
-# 🚀 Tecnologias Utilizadas
-
-## Backend
-
-* Node.js
-* Express
-* PostgreSQL
-* Prisma ORM
-
-## Frontend
-
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
-* Axios
-* React Router DOM
+O sistema permite cadastrar produtos, criar ordens de producao, registrar apontamentos de quantidades boas e refugadas, acompanhar o progresso de cada ordem e visualizar indicadores gerais no dashboard.
 
 ---
 
-# ⚙️ Funcionalidades
+## Tecnologias utilizadas
 
-## 📦 Produtos
+**Backend**
 
-* Cadastro de produtos
-* Listagem de produtos
-* SKU único
+- Node.js com Express
+- Prisma ORM
+- PostgreSQL
+- dotenv para configuracao de ambiente
 
-## 📋 Ordens de Produção
+**Frontend**
 
-* Criação de ordens
-* Listagem de ordens
-* Filtro por status, produto e número
-* Alteração de status (OPEN, IN_PROGRESS, FINISHED)
-
-## 🏭 Produção
-
-* Registro de apontamentos:
-
-  * GOOD (produção válida)
-  * SCRAP (refugo)
-* Histórico de apontamentos por ordem
-
-## 📊 Dashboard
-
-* Total de ordens
-* Ordens abertas
-* Ordens finalizadas
-* Quantidade produzida (GOOD)
-* Quantidade refugada (SCRAP)
+- React com TypeScript
+- Vite
+- Tailwind CSS
+- Axios
+- React Router DOM
 
 ---
 
-# 📁 Estrutura do Projeto
+## Estrutura do projeto
 
 ```
 backend/
- ├── prisma/
- │    └── schema.prisma
- ├── src/
- │    ├── prisma.js
- │    ├── routes.js
- │    └── index.js
- ├── .env
- └── .env.example
+  prisma/
+    schema.prisma
+  src/
+    index.js
+    routes.js
+  .env.example
 
 frontend/
- ├── src/
- │    ├── api/
- │    ├── components/
- │    ├── pages/
- │    ├── types/
- │    ├── App.tsx
- │    └── main.tsx
+  src/
+    api/
+      api.ts
+    components/
+      OrderForm.tsx
+      ProductForm.tsx
+      RecordForm.tsx
+      StatusBadge.tsx
+    pages/
+      Dashboard.tsx
+      OrderDetail.tsx
+      Orders.tsx
+      Products.tsx
+    types/
+      index.ts
+    App.tsx
+    main.tsx
 ```
 
 ---
 
-# 🔧 Como executar o projeto
+## Pre-requisitos
 
-## 📌 Pré-requisitos
-
-* Node.js instalado
-* PostgreSQL rodando
-* NPM ou Yarn
+- Node.js 18 ou superior
+- PostgreSQL rodando localmente
+- npm
 
 ---
 
-## 🔙 Backend
+## Como executar o projeto
+
+### 1. Backend
+
+Entre na pasta do backend e instale as dependencias:
 
 ```bash
 cd backend
 npm install
 ```
 
-### Configurar banco de dados
-
-Crie um banco de dados no PostgreSQL. Em seguida, crie um arquivo `.env` na pasta `backend` com base no `.env.example`:
+Crie o arquivo `.env` a partir do exemplo:
 
 ```bash
 cp .env.example .env
 ```
 
-Configure a variável `DATABASE_URL` no arquivo `.env` com as suas credenciais. Exemplo:
+Abra o arquivo `.env` e configure a variavel `DATABASE_URL` com as credenciais do seu banco:
 
 ```env
-DATABASE_URL="postgresql://postgres:senha@localhost:5432/producao?schema=public"
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/producao?schema=public"
+PORT=3000
 ```
 
-Execute as migrations do Prisma para criar as tabelas no banco de dados:
+Execute as migrations para criar as tabelas no banco de dados:
 
 ```bash
 npx prisma migrate dev --name init
 ```
 
-### Rodar backend
+Inicie o servidor:
 
 ```bash
 npm run dev
 ```
 
-Servidor disponível em:
-
-```
-http://localhost:3000
-```
+O backend ficara disponivel em `http://localhost:3000`.
 
 ---
 
-## 🔜 Frontend
+### 2. Frontend
+
+Em outro terminal, entre na pasta do frontend e instale as dependencias:
 
 ```bash
 cd frontend
@@ -144,85 +116,65 @@ npm install
 npm run dev
 ```
 
-Aplicação disponível em:
-
-```
-http://localhost:5173
-```
+A aplicacao ficara disponivel em `http://localhost:5173`.
 
 ---
 
-# 🔗 Endpoints da API
+## Endpoints da API
 
-## Produtos
-
-* GET `/api/products`
-* POST `/api/products`
-
-## Ordens
-
-* GET `/api/orders`
-* POST `/api/orders`
-* GET `/api/orders/:id`
-* PATCH `/api/orders/:id/status`
-
-## Produção
-
-* POST `/api/orders/:id/records`
-
-## Dashboard
-
-* GET `/api/dashboard/production`
+| Metodo | Rota | Descricao |
+|--------|------|-----------|
+| GET | /api/products | Lista todos os produtos |
+| POST | /api/products | Cadastra um produto |
+| GET | /api/orders | Lista ordens (com filtros opcionais) |
+| POST | /api/orders | Cria uma ordem de producao |
+| GET | /api/orders/:id | Detalha uma ordem com progresso e apontamentos |
+| PATCH | /api/orders/:id/status | Altera o status da ordem |
+| POST | /api/orders/:id/records | Registra um apontamento GOOD ou SCRAP |
+| GET | /api/dashboard/production | Retorna resumo geral da producao |
 
 ---
 
-# 📌 Regras de Negócio Implementadas
+## Regras de negocio implementadas
 
-* SKU único para produtos
-* Número da ordem único
-* Quantidade planejada > 0
-* Quantidade de apontamento > 0
-* Ordem finalizada não aceita novos apontamentos
-* Quantidade GOOD não ultrapassa a planejada
-* Status: OPEN, IN_PROGRESS, FINISHED
-
----
-
-# ⚠️ Limitações
-
-* Não possui autenticação
-* Não possui paginação
-* Validações básicas
-* Layout simples (foco funcional)
+- SKU do produto deve ser unico.
+- Numero da ordem deve ser unico.
+- Quantidade planejada da ordem deve ser maior que zero.
+- Quantidade informada em um apontamento deve ser maior que zero.
+- Ordens finalizadas nao aceitam novos apontamentos.
+- A quantidade GOOD acumulada nao pode ultrapassar a quantidade planejada da ordem.
+- Status aceitos: OPEN, IN_PROGRESS e FINISHED.
+- Ao registrar o primeiro apontamento de uma ordem OPEN, o sistema altera automaticamente o status para IN_PROGRESS.
+- Ao registrar um apontamento GOOD que completa a quantidade planejada, o status e alterado automaticamente para FINISHED e a data de finalizacao e registrada.
+- A alteracao manual de status via PATCH tambem registra a data de finalizacao quando o status e FINISHED.
 
 ---
 
-# 🚀 Melhorias Futuras
+## Decisoes tecnicas
 
-* Autenticação de usuários
-* Paginação e ordenação
-* Testes automatizados
-* Melhorias de UI/UX
-* Dashboard com gráficos
-* Dockerização do projeto
-
----
-
-# 🧠 Decisões Técnicas
-
-* Uso de React com Vite para simplicidade e performance
-* Separação de responsabilidades entre frontend e backend
-* Uso de TypeScript no frontend para maior segurança
-* API REST simples e clara
+- O backend foi escrito em JavaScript puro (sem TypeScript) por simplicidade, mas o Prisma ja fornece tipagem nos modelos. O frontend utiliza TypeScript com tipos proprios definidos em `src/types/index.ts`.
+- A porta do servidor e configuravel via variavel de ambiente `PORT` no arquivo `.env`. O valor padrao e 3000.
+- A listagem de ordens no frontend faz paginacao no lado do cliente com 15 itens por pagina. Em um ambiente de producao com grande volume de dados, o ideal seria implementar paginacao no backend.
+- O dashboard busca os apontamentos em memoria para calcular os totais. Para volumes maiores, o uso de agregacoes no Prisma seria mais eficiente.
+- A autenticacao nao foi implementada conforme orientacao do enunciado.
 
 ---
 
-# 📷 Demonstração
+## Limitacoes conhecidas
 
-(Opcional: adicionar prints da aplicação)
+- Sem autenticacao ou controle de acesso.
+- Paginacao de ordens e feita no cliente, nao no servidor.
+- Sem testes automatizados.
+- Sem Docker Compose para subir o ambiente completo.
+- A busca de ordens nao inclui filtro por nome do produto ou SKU, apenas por numero da ordem e status.
 
 ---
 
-# ✅ Conclusão
+## Melhorias futuras
 
-A aplicação atende todos os requisitos mínimos propostos, com foco em organização, clareza de código e funcionamento completo do fluxo de produção.
+- Adicionar paginacao e ordenacao no backend com parametros de query.
+- Filtro de ordens por nome do produto e SKU via query no banco de dados.
+- Validacao de entrada com Zod no backend.
+- Testes automatizados para as regras de negocio principais.
+- Docker Compose para facilitar a execucao do ambiente.
+- Dashboard com graficos de progresso por periodo.

@@ -85,9 +85,9 @@ export default function Dashboard() {
             </div>
 
             <div>
-                <h1 className="text-2xl font-extrabold text-slate-900 mb-6 border-b border-slate-200 pb-4 mt-12">
-                    Desempenho de Produção
-                </h1>
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-6 border-b border-slate-200 pb-4 mt-12">
+                    Desempenho de Producao
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-all duration-300 relative overflow-hidden group">

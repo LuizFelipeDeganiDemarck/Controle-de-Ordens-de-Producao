@@ -1,33 +1,36 @@
-import { useEffect, useState } from "react";
-import { api } from "../api/api";
-import OrderForm from "../components/OrderForm";
-import StatusBadge from "../components/StatusBadge";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { api } from '../api/api';
+import type { Order } from '../types';
+import OrderForm from '../components/OrderForm';
+import StatusBadge from '../components/StatusBadge';
+import { Link } from 'react-router-dom';
 
 export default function Orders() {
-    const [orders, setOrders] = useState([]);
-    const [filterOrderNumber, setFilterOrderNumber] = useState("");
-    const [filterStatus, setFilterStatus] = useState("");
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [filterOrderNumber, setFilterOrderNumber] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
 
     function getOrders() {
-        api.get("/orders").then((res) => setOrders(res.data));
+        setLoading(true);
+        api.get<Order[]>('/orders')
+            .then((res) => setOrders(res.data))
+            .finally(() => setLoading(false));
     }
 
     useEffect(() => {
         getOrders();
     }, []);
 
-    const filteredOrders = orders.filter((o: any) => {
+    const filteredOrders = orders.filter((o) => {
         const matchNumber = o.orderNumber
             ?.toLowerCase()
             .includes(filterOrderNumber.toLowerCase());
 
-        const matchStatus = filterStatus
-            ? o.status === filterStatus
-            : true;
+        const matchStatus = filterStatus ? o.status === filterStatus : true;
 
         return matchNumber && matchStatus;
     });
@@ -43,7 +46,7 @@ export default function Orders() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in p-4 lg:p-0">
             <h1 className="text-2xl font-extrabold text-slate-900 border-b border-slate-200 pb-4">
-                Gestão de Ordens
+                Gestao de Ordens
             </h1>
 
             <OrderForm onSuccess={getOrders} />
@@ -74,23 +77,27 @@ export default function Orders() {
                 </div>
 
                 <div className="overflow-x-auto">
-                    {currentOrders.length > 0 ? (
+                    {loading ? (
+                        <div className="flex justify-center items-center py-12">
+                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500" />
+                        </div>
+                    ) : currentOrders.length > 0 ? (
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 text-slate-600 text-sm uppercase tracking-wider">
-                                    <th className="p-3 font-semibold border-b border-slate-200">Número</th>
+                                    <th className="p-3 font-semibold border-b border-slate-200">Numero</th>
                                     <th className="p-3 font-semibold border-b border-slate-200">Status</th>
                                     <th className="p-3 font-semibold border-b border-slate-200">Produto</th>
                                     <th className="p-3 font-semibold border-b border-slate-200 text-right">Aceitas</th>
                                     <th className="p-3 font-semibold border-b border-slate-200 text-right">Refugadas</th>
                                     <th className="p-3 font-semibold border-b border-slate-200 text-right">Total</th>
-                                    <th className="p-3 font-semibold border-b border-slate-200 text-center">% Concluída</th>
+                                    <th className="p-3 font-semibold border-b border-slate-200 text-center">% Concluida</th>
                                     <th className="p-3 font-semibold border-b border-slate-200 text-center">% Refugada</th>
-                                    <th className="p-3 font-semibold border-b border-slate-200 text-center">Ações</th>
+                                    <th className="p-3 font-semibold border-b border-slate-200 text-center">Acoes</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {currentOrders.map((o: any) => (
+                                {currentOrders.map((o) => (
                                     <tr key={o.id} className="hover:bg-slate-50 transition-colors group">
                                         <td className="p-3 font-mono text-sm text-slate-700">{o.orderNumber}</td>
                                         <td className="p-3">
@@ -104,7 +111,7 @@ export default function Orders() {
                                         <td className="p-3 text-center">
                                             <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md text-xs font-bold">
                                                 {o.targetQuantity
-                                                    ? ((o.totalGood / o.targetQuantity) * 100).toFixed(1)
+                                                    ? (((o.totalGood ?? 0) / o.targetQuantity) * 100).toFixed(1)
                                                     : 0}%
                                             </span>
                                         </td>
@@ -112,22 +119,18 @@ export default function Orders() {
                                         <td className="p-3 text-center">
                                             <span className="bg-rose-50 text-rose-700 px-2 py-1 rounded-md text-xs font-bold">
                                                 {o.targetQuantity
-                                                    ? ((o.totalScrap / o.targetQuantity) * 100).toFixed(1)
+                                                    ? (((o.totalScrap ?? 0) / o.targetQuantity) * 100).toFixed(1)
                                                     : 0}%
                                             </span>
                                         </td>
 
                                         <td className="p-3 text-center">
-                                            {o.status !== "FINISHED" ? (
-                                                <Link
-                                                    to={`/orders/${o.id}`}
-                                                    className="text-blue-600 hover:text-blue-800 hover:underline font-medium text-sm transition-colors"
-                                                >
-                                                    Editar
-                                                </Link>
-                                            ) : (
-                                                <span className="text-slate-400 text-sm">Finalizada</span>
-                                            )}
+                                            <Link
+                                                to={`/orders/${o.id}`}
+                                                className="text-blue-600 hover:text-blue-800 hover:underline font-medium text-sm transition-colors"
+                                            >
+                                                {o.status !== 'FINISHED' ? 'Editar' : 'Visualizar'}
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))}
@@ -136,7 +139,7 @@ export default function Orders() {
                     ) : (
                         <div className="text-center p-10 text-slate-500">
                             <p className="text-lg font-medium">Nenhuma ordem encontrada.</p>
-                            <p className="text-sm mt-1">Ajuste os filtros ou crie uma nova ordem de produção.</p>
+                            <p className="text-sm mt-1">Ajuste os filtros ou crie uma nova ordem de producao.</p>
                         </div>
                     )}
                 </div>
@@ -144,11 +147,17 @@ export default function Orders() {
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-4">
                         <span className="text-sm text-slate-500">
-                            Mostrando <span className="font-medium text-slate-800">{startIndex + 1}</span> a <span className="font-medium text-slate-800">{Math.min(startIndex + itemsPerPage, filteredOrders.length)}</span> de <span className="font-medium text-slate-800">{filteredOrders.length}</span> ordens
+                            Mostrando{' '}
+                            <span className="font-medium text-slate-800">{startIndex + 1}</span> a{' '}
+                            <span className="font-medium text-slate-800">
+                                {Math.min(startIndex + itemsPerPage, filteredOrders.length)}
+                            </span>{' '}
+                            de{' '}
+                            <span className="font-medium text-slate-800">{filteredOrders.length}</span> ordens
                         </span>
                         <div className="flex gap-2">
                             <button
-                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
                                 className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
@@ -158,11 +167,11 @@ export default function Orders() {
                                 {currentPage} / {totalPages}
                             </span>
                             <button
-                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                 disabled={currentPage === totalPages}
                                 className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
-                                Próxima
+                                Proxima
                             </button>
                         </div>
                     </div>
