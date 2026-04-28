@@ -8,7 +8,8 @@ type OrderWithRecords = ProductionOrder & {
     records: ProductionRecord[];
 };
 
-const calculateOrderProgress = (order: OrderWithRecords) => {
+function calculateOrderProgress(order: OrderWithRecords) {
+    // Filtra todas as ordens GOOD no filter e soma toda quantidade. 
     const totalGood = order.records
         .filter((r) => r.type === 'GOOD')
         .reduce((sum, r) => sum + r.quantity, 0);
@@ -17,12 +18,7 @@ const calculateOrderProgress = (order: OrderWithRecords) => {
         .filter((r) => r.type === 'SCRAP')
         .reduce((sum, r) => sum + r.quantity, 0);
 
-    const progress =
-        order.targetQuantity > 0
-            ? ((totalGood / order.targetQuantity) * 100).toFixed(2)
-            : '0.00';
-
-    return { totalGood, totalScrap, progress };
+    return { totalGood, totalScrap };
 };
 
 router.post('/api/products', async (req: Request, res: Response) => {
@@ -100,8 +96,8 @@ router.get('/api/orders', async (_req: Request, res: Response) => {
         });
 
         const data = orders.map((order) => {
-            const { totalGood, totalScrap, progress } = calculateOrderProgress(order);
-            return { ...order, totalGood, totalScrap, progress };
+            const { totalGood, totalScrap } = calculateOrderProgress(order);
+            return { ...order, totalGood, totalScrap };
         });
 
         res.json(data);
@@ -127,9 +123,9 @@ router.get('/api/orders/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const { totalGood, totalScrap, progress } = calculateOrderProgress(order);
+        const { totalGood, totalScrap } = calculateOrderProgress(order);
 
-        res.json({ ...order, totalGood, totalScrap, progress });
+        res.json({ ...order, totalGood, totalScrap });
     } catch {
         res.status(500).json({ error: 'Erro interno ao buscar ordem' });
     }

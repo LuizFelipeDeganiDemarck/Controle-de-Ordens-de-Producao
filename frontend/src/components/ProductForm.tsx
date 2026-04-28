@@ -54,7 +54,7 @@ export default function ProductForm({ onSuccess }: Props) {
                     placeholder="Código SKU"
                     value={sku}
                     onChange={(e) => setSku(e.target.value)}
-                    className="border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-1/4 transition-all uppercase"
+                    className="border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-1/4 transition-all"
                     required
                 />
                 <button

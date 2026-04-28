@@ -59,7 +59,7 @@ export default function OrderDetail() {
                     <StatusBadge status={order.status} />
                 </div>
                 <div>
-                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold mb-1">Meta de Producao</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold mb-1">Meta de Produção</p>
                     <p className="text-lg font-black text-slate-700">{order.targetQuantity} unid.</p>
                 </div>
             </div>

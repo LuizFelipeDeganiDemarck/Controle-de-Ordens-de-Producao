@@ -86,7 +86,7 @@ export default function Dashboard() {
 
             <div>
                 <h2 className="text-2xl font-extrabold text-slate-900 mb-6 border-b border-slate-200 pb-4 mt-12">
-                    Desempenho de Producao
+                    Desempenho de Produção
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

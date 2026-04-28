@@ -21,7 +21,7 @@ export default function Products() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in p-4 lg:p-0">
             <h1 className="text-2xl font-extrabold text-slate-900 mb-6 border-b border-slate-200 pb-4">
-                Gestao de Produtos
+                Gestão de Produtos
             </h1>
 
             <ProductForm onSuccess={load} />

@@ -46,7 +46,7 @@ export default function Orders() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in p-4 lg:p-0">
             <h1 className="text-2xl font-extrabold text-slate-900 border-b border-slate-200 pb-4">
-                Gestao de Ordens
+                Gestão de Ordens
             </h1>
 
             <OrderForm onSuccess={getOrders} />
